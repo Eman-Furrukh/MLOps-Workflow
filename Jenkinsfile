@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Eman-Furrukh/MLOps-Workflow.git'
+                git branch: 'main', url: 'https://github.com/Eman-Furrukh/MLOps-Workflow.git'
             }
         }
 
