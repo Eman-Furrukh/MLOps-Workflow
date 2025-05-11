@@ -56,11 +56,15 @@ pipeline {
                         docker rm %CONTAINER_NAME% 2> nul || echo Container not found
                     """
                     
-                    // Run new container with health check
+                    // Run new container and verify it's running
                     bat """
                         docker run -d --name %CONTAINER_NAME% -p 5000:5000 %IMAGE_NAME%
                         timeout /t 30 /nobreak
-                        docker ps --filter "name=%CONTAINER_NAME%" --filter "status=running" --quiet
+                        for /l %%x in (1,1,10) do (
+                          docker inspect -f \"{{.State.Running}}\" %CONTAINER_NAME% | findstr \"true\" && exit /b 0
+                          timeout /t 3 /nobreak
+                        )
+                        exit /b 1
                     """
                 }
             }
