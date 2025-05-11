@@ -6,8 +6,12 @@ from sklearn.metrics import accuracy_score
 import joblib
 import logging
 
+
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 # Use the current working directory for the base path
 BASE_DIR = os.getcwd()
@@ -15,6 +19,7 @@ BASE_DIR = os.getcwd()
 # File paths
 PROCESSED_CSV = os.path.join(BASE_DIR, "data", "preprocessed_weather_data.csv")
 MODEL_PATH = os.path.join(BASE_DIR, "models", "weather_model.pkl")
+
 
 def train_weather_model(input_csv=PROCESSED_CSV, model_output=MODEL_PATH):
     """Train a weather model to predict 'Is_Rainy'."""
@@ -28,7 +33,9 @@ def train_weather_model(input_csv=PROCESSED_CSV, model_output=MODEL_PATH):
         y = df["Is_Rainy"]
 
         # Split data into training and test sets
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
 
         # Train model
         model = RandomForestClassifier(n_estimators=100, random_state=42)
@@ -45,6 +52,7 @@ def train_weather_model(input_csv=PROCESSED_CSV, model_output=MODEL_PATH):
         logging.info(f"[✓] Model saved to {model_output}")
     except Exception as e:
         logging.error(f"Error training the model: {e}")
+
 
 if __name__ == "__main__":
     train_weather_model()
