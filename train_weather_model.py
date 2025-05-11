@@ -1,4 +1,3 @@
-#train_weather_model.py
 import pandas as pd
 import os
 from sklearn.ensemble import RandomForestClassifier
