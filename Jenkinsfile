@@ -7,7 +7,7 @@ pipeline {
         CONTAINER_NAME = 'mlops-container'
         DOCKER_REGISTRY = 'docker.io'
         
-        // Port configuration (changed host port to 5001)
+        // Port configuration - CHANGED TO 5001
         HOST_PORT = '5001'  
         CONTAINER_PORT = '5000'
         
@@ -84,11 +84,11 @@ pipeline {
             steps {
                 script {
                     bat """
-                        echo "Starting container..."
+                        echo "Starting container on port %HOST_PORT%..."
                         docker stop %CONTAINER_NAME% --time %CONTAINER_STOP_TIMEOUT% 2> nul || echo "No running container to stop"
                         docker rm %CONTAINER_NAME% 2> nul || echo "No container to remove"
                         docker run -d --name %CONTAINER_NAME% -p %HOST_PORT%:%CONTAINER_PORT% %IMAGE_NAME%
-                        echo "Container started on port %HOST_PORT%"
+                        echo "Container started successfully on port %HOST_PORT%"
                         echo "Application should be available at: http://localhost:%HOST_PORT%"
                     """
                 }
