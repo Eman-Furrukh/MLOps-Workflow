@@ -56,8 +56,12 @@ pipeline {
                         docker rm %CONTAINER_NAME% 2> nul || echo Container not found
                     """
                     
-                    // Run new container
-                    bat "docker run -d --name %CONTAINER_NAME% -p 5000:5000 %IMAGE_NAME%"
+                    // Run new container with health check
+                    bat """
+                        docker run -d --name %CONTAINER_NAME% -p 5000:5000 %IMAGE_NAME%
+                        timeout /t 30 /nobreak
+                        docker ps --filter "name=%CONTAINER_NAME%" --filter "status=running" --quiet
+                    """
                 }
             }
         }
