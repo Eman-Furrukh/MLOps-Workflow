@@ -23,7 +23,7 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     script {
-                        bat "docker login ${DOCKER_REGISTRY} -u %DOCKER_USER% -p %DOCKER_PASS%"
+                        bat "docker login %DOCKER_REGISTRY% -u %DOCKER_USER% -p %DOCKER_PASS%"
                     }
                 }
             }
