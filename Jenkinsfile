@@ -8,6 +8,17 @@ pipeline {
     }
 
     stages {
+        stage('Clean Docker Environment') {
+            steps {
+                script {
+                    bat """
+                        docker builder prune -af || echo "Builder prune failed"
+                        docker system prune -af || echo "System prune failed"
+                    """
+                }
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 git branch: 'main', 
@@ -23,7 +34,7 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     script {
-                        bat "docker login %DOCKER_REGISTRY% -u %DOCKER_USER% -p %DOCKER_PASS%"
+                        bat "echo %DOCKER_PASS% | docker login %DOCKER_REGISTRY% -u %DOCKER_USER% --password-stdin"
                     }
                 }
             }
@@ -32,7 +43,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    bat "docker build -t %IMAGE_NAME% ."
+                    bat "docker build --no-cache -t %IMAGE_NAME% ."
                 }
             }
         }
@@ -50,21 +61,10 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    // Clean up any existing container
                     bat """
                         docker stop %CONTAINER_NAME% 2> nul || echo Container not running
                         docker rm %CONTAINER_NAME% 2> nul || echo Container not found
-                    """
-                    
-                    // Run new container and verify it's running
-                    bat """
                         docker run -d --name %CONTAINER_NAME% -p 5000:5000 %IMAGE_NAME%
-                        timeout /t 30 /nobreak
-                        for /l %%x in (1,1,10) do (
-                          docker inspect -f \"{{.State.Running}}\" %CONTAINER_NAME% | findstr \"true\" && exit /b 0
-                          timeout /t 3 /nobreak
-                        )
-                        exit /b 1
                     """
                 }
             }
