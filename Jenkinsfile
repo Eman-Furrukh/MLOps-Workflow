@@ -23,7 +23,7 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     script {
-                        sh 'docker login ${DOCKER_REGISTRY} -u "$DOCKER_USER" -p "$DOCKER_PASS"'
+                        bat "docker login ${DOCKER_REGISTRY} -u %DOCKER_USER% -p %DOCKER_PASS%"
                     }
                 }
             }
@@ -32,7 +32,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${IMAGE_NAME}")
+                    bat "docker build -t %IMAGE_NAME% ."
                 }
             }
         }
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 script {
                     retry(3) {
-                        sh "docker push ${IMAGE_NAME}"
+                        bat "docker push %IMAGE_NAME%"
                     }
                 }
             }
@@ -51,13 +51,13 @@ pipeline {
             steps {
                 script {
                     // Clean up any existing container
-                    sh """
-                        docker stop ${CONTAINER_NAME} || true
-                        docker rm ${CONTAINER_NAME} || true
+                    bat """
+                        docker stop %CONTAINER_NAME% || exit 0
+                        docker rm %CONTAINER_NAME% || exit 0
                     """
                     
-                    // Run new container - all on one line
-                    sh "docker run -d --name ${CONTAINER_NAME} -p 5000:5000 ${IMAGE_NAME}"
+                    // Run new container
+                    bat "docker run -d --name %CONTAINER_NAME% -p 5000:5000 %IMAGE_NAME%"
                 }
             }
         }
@@ -67,7 +67,7 @@ pipeline {
         always {
             echo 'Pipeline completed. Cleaning up...'
             script {
-                sh 'docker system prune -f || true'
+                bat "docker system prune -f || exit 0"
             }
         }
         success {
