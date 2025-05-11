@@ -15,31 +15,34 @@ PROCESSED_CSV = os.path.join(BASE_DIR, "data", "preprocessed_weather_data.csv")
 def preprocess_weather_data(input_path, output_path):
     """Preprocess raw weather data."""
     logging.info(f"Preprocessing data from {input_path}...")
+
     try:
         # Load raw data
-        df = pd.read_csv(input_path, encoding='ISO-8859-1')
+        df = pd.read_csv(input_path)
 
-        # Drop missing values
+        # Drop rows with any missing values
         df.dropna(inplace=True)
 
         # Convert 'Timestamp' to datetime
         df['Timestamp'] = pd.to_datetime(df['Timestamp'])
 
-        # Feature: Hour of the day
+        # Extract hour from timestamp
         df['Hour'] = df['Timestamp'].dt.hour
 
-        # Feature: Is it rainy/cloudy?
+        # Create binary feature for rainy/cloudy weather
         df['Is_Rainy'] = df['Weather'].str.contains("rain|drizzle|storm|shower", case=False, na=False).astype(int)
 
-        # Drop unneeded columns
-        df = df.drop(columns=['City', 'Timestamp'])
+        # Drop unused columns
+        df.drop(columns=['City', 'Timestamp'], inplace=True)
 
-        # Reorder columns for output
-        cols = ['Hour', 'Temp (C)', 'Humidity (%)', 'Wind Speed (m/s)', 'Is_Rainy']
-        df = df[cols]
+        # Define column order
+        processed_cols = ['Hour', 'Temp (C)', 'Humidity (%)', 'Wind Speed (m/s)', 'Is_Rainy']
+        df = df[processed_cols]
 
-        # Save preprocessed data
+        # Ensure output directory exists
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+        # Save to CSV
         df.to_csv(output_path, index=False)
         logging.info(f"[✓] Preprocessed data saved to {output_path}")
     except Exception as e:
