@@ -1,4 +1,0 @@
-apache-airflow==2.5.0
-pandas
-dvc
-requests

@@ -1,0 +1,30 @@
+name: Flake8 Linting
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  flake8-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run Flake8
+        run: |
+          # Basic flake8 check for critical errors
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Full flake8 check with line length limit
+          flake8 . --count --max-line-length=100 --statistics

@@ -1,0 +1,22 @@
+stages:
+  collect_data:
+    cmd: python collect_data.py
+    deps:
+    - collect_data.py
+    outs:
+    - data/glasgow_weather_data.csv
+  process_data:
+    cmd: python process_data.py
+    deps:
+    - data/glasgow_weather_data.csv
+    - process_data.py
+    outs:
+    - data/preprocessed_weather_data.csv
+
+  train_weather_model:
+    cmd: python train_weather_model.py 
+    deps:
+    - data/preprocessed_weather_data.csv
+    - train_weather_model.py
+    outs:
+    - models/weather_model.pkl

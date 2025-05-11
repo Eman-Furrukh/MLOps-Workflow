@@ -5,9 +5,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import joblib
+import logging
+
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 # Use the current working directory as base
 BASE_DIR = os.getcwd()
@@ -15,6 +20,7 @@ BASE_DIR = os.getcwd()
 # File paths
 PROCESSED_CSV = os.path.join(BASE_DIR, "data", "preprocessed_weather_data.csv")
 MODEL_PATH = os.path.join(BASE_DIR, "models", "weather_model.pkl")
+
 
 def train_weather_model(input_csv=PROCESSED_CSV, model_output=MODEL_PATH):
     """Train a RandomForest model to predict rainy conditions."""
@@ -28,10 +34,8 @@ def train_weather_model(input_csv=PROCESSED_CSV, model_output=MODEL_PATH):
         X = df.drop(columns=["Is_Rainy"])
         y = df["Is_Rainy"]
 
-        # Train-test split
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
+        # Split data into training and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         # Initialize and train the model
         model = RandomForestClassifier(n_estimators=100, random_state=42)
@@ -48,6 +52,7 @@ def train_weather_model(input_csv=PROCESSED_CSV, model_output=MODEL_PATH):
         logging.info(f"[✓] Trained model saved to {model_output}")
     except Exception as e:
         logging.error(f"Error during model training: {e}")
+
 
 if __name__ == "__main__":
     train_weather_model()
