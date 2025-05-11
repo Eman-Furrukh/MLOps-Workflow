@@ -52,8 +52,8 @@ pipeline {
                 script {
                     // Clean up any existing container
                     bat """
-                        docker stop %CONTAINER_NAME% || exit 0
-                        docker rm %CONTAINER_NAME% || exit 0
+                        docker stop %CONTAINER_NAME% 2> nul || echo Container not running
+                        docker rm %CONTAINER_NAME% 2> nul || echo Container not found
                     """
                     
                     // Run new container
@@ -67,7 +67,7 @@ pipeline {
         always {
             echo 'Pipeline completed. Cleaning up...'
             script {
-                bat "docker system prune -f || exit 0"
+                bat "docker system prune -f 2> nul || echo Docker cleanup failed"
             }
         }
         success {
