@@ -1,0 +1,6 @@
+artifact_location: mlflow-artifacts:/492915526387583685
+creation_time: 1746996805458
+experiment_id: '492915526387583685'
+last_update_time: 1746996805458
+lifecycle_stage: active
+name: weather-prediction-experiment

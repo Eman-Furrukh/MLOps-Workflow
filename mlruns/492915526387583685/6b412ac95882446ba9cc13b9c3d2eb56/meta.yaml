@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/492915526387583685/6b412ac95882446ba9cc13b9c3d2eb56/artifacts
+end_time: 1746996822181
+entry_point_name: ''
+experiment_id: '492915526387583685'
+lifecycle_stage: active
+run_id: 6b412ac95882446ba9cc13b9c3d2eb56
+run_name: brawny-quail-95
+run_uuid: 6b412ac95882446ba9cc13b9c3d2eb56
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746996808307
+status: 3
+tags: []
+user_id: aamir
