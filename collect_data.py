@@ -34,28 +34,33 @@ def fetch_weather():
         weather = data['weather'][0]['description']
         humidity = data['main']['humidity']
         wind_speed = data['wind']['speed']
-
-        return [timestamp, CITY, temp, weather, humidity, wind_speed]
+        
+        return {
+            'Timestamp': timestamp,
+            'City': CITY,
+            'Temp (C)': temp,
+            'Weather': weather,
+            'Humidity (%)': humidity,
+            'Wind Speed (m/s)': wind_speed
+        }
     except requests.exceptions.RequestException as e:
         logging.error(f"Error fetching weather data: {e}")
         return None
 
 
 def write_to_csv(data, path):
-    """Write collected data to a CSV file."""
+    """Append collected data to a CSV file."""
     try:
         os.makedirs(os.path.dirname(path), exist_ok=True)
         file_exists = os.path.exists(path)
-
+        
         with open(path, mode='a', newline='') as file:
             writer = csv.writer(file)
             if not file_exists:
-                writer.writerow([
-                    'Timestamp', 'City', 'Temp (C)', 'Weather',
-                    'Humidity (%)', 'Wind Speed (m/s)'
-                ])
+                writer.writerow(['Timestamp', 'City', 'Temp (C)', 'Weather', 'Humidity (%)', 'Wind Speed (m/s)'])
             writer.writerow(data)
-        logging.info(f"Weather data written to {path}")
+
+        logging.info(f"Weather data appended to {path}")
     except Exception as e:
         logging.error(f"Error writing to CSV: {e}")
 

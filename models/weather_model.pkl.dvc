@@ -1,5 +1,0 @@
-outs:
-- md5: 137892feae54efd517d672e7ea2677f1
-  size: 181721
-  hash: md5
-  path: weather_model.pkl

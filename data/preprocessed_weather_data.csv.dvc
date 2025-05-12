@@ -1,5 +1,0 @@
-outs:
-- md5: 076b6394200bc797364038097a45b10d
-  size: 2153
-  hash: md5
-  path: preprocessed_weather_data.csv
