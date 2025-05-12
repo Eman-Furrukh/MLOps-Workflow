@@ -34,7 +34,6 @@ def fetch_weather():
         weather = data['weather'][0]['description']
         humidity = data['main']['humidity']
         wind_speed = data['wind']['speed']
-        
         return {
             'Timestamp': timestamp,
             'City': CITY,
@@ -53,11 +52,18 @@ def write_to_csv(data, path):
     try:
         os.makedirs(os.path.dirname(path), exist_ok=True)
         file_exists = os.path.exists(path)
-        
         with open(path, mode='a', newline='') as file:
             writer = csv.writer(file)
             if not file_exists:
-                writer.writerow(['Timestamp', 'City', 'Temp (C)', 'Weather', 'Humidity (%)', 'Wind Speed (m/s)'])
+                writer.writerow([
+                    'Timestamp',
+                    'City',
+                    'Temp (C)',
+                    'Weather',
+                    'Humidity (%)',
+                    'Wind Speed (m/s)'
+                ])
+
             writer.writerow(data)
 
         logging.info(f"Weather data appended to {path}")
