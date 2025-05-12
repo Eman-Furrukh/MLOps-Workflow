@@ -2,8 +2,12 @@ import pandas as pd
 import os
 import logging
 
+
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 # Use the current working directory to get the base path
 BASE_DIR = os.getcwd()
@@ -11,6 +15,7 @@ BASE_DIR = os.getcwd()
 # Define file paths
 RAW_CSV = os.path.join(BASE_DIR, "data", "glasgow_weather_data.csv")
 PROCESSED_CSV = os.path.join(BASE_DIR, "data", "preprocessed_weather_data.csv")
+
 
 def preprocess_weather_data(input_path, output_path):
     """Preprocess raw weather data."""
@@ -30,13 +35,19 @@ def preprocess_weather_data(input_path, output_path):
         df['Hour'] = df['Timestamp'].dt.hour
 
         # Create binary feature for rainy/cloudy weather
-        df['Is_Rainy'] = df['Weather'].str.contains("rain|drizzle|storm|shower", case=False, na=False).astype(int)
+        weather_pattern = "rain|drizzle|storm|shower"
+        df['Is_Rainy'] = df['Weather'].str.contains(
+            weather_pattern, case=False, na=False
+        ).astype(int)
 
         # Drop unused columns
         df.drop(columns=['City', 'Timestamp'], inplace=True)
 
         # Define column order
-        processed_cols = ['Hour', 'Temp (C)', 'Humidity (%)', 'Wind Speed (m/s)', 'Is_Rainy']
+        processed_cols = [
+            'Hour', 'Temp (C)', 'Humidity (%)',
+            'Wind Speed (m/s)', 'Is_Rainy'
+        ]
         df = df[processed_cols]
 
         # Ensure output directory exists
@@ -47,6 +58,7 @@ def preprocess_weather_data(input_path, output_path):
         logging.info(f"[✓] Preprocessed data saved to {output_path}")
     except Exception as e:
         logging.error(f"Error preprocessing weather data: {e}")
+
 
 if __name__ == "__main__":
     preprocess_weather_data(RAW_CSV, PROCESSED_CSV)

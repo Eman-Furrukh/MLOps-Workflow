@@ -20,7 +20,10 @@ default_args = {
 dag = DAG(
     'weather_pipeline',
     default_args=default_args,
-    description='Weather Data Collection, Processing, and Model Training Pipeline',
+    description=(
+        'Weather Data Collection, Processing, '
+        'and Model Training Pipeline'
+    ),
     schedule_interval="*/10 * * * *",  # Every 10 minutes
     catchup=False
 )
@@ -29,26 +32,29 @@ RAW_CSV = os.path.join("data", "glasgow_weather_data.csv")
 PROCESSED_CSV = os.path.join("data", "preprocessed_weather_data.csv")
 MODEL_PATH = os.path.join("models", "weather_model.pkl")
 
-# Task 1: Fetch and append data
+
 def fetch_and_store_data():
+    """Fetch and append data to raw CSV, then push with DVC."""
     weather_data = fetch_weather()
     write_to_csv(weather_data, RAW_CSV, mode='a')  # Append mode
-    subprocess.run(["dvc", "add", RAW_CSV])  # Track the raw CSV file with DVC
-    subprocess.run(["dvc", "push"])  # Push the file to remote DVC storage
+    subprocess.run(["dvc", "add", RAW_CSV])
+    subprocess.run(["dvc", "push"])
 
-# Task 2: Preprocess data
+
 def preprocess_and_store_data():
+    """Preprocess data and push with DVC."""
     preprocess_weather_data(RAW_CSV, PROCESSED_CSV)
-    subprocess.run(["dvc", "add", PROCESSED_CSV])  # Track the preprocessed CSV file with DVC
-    subprocess.run(["dvc", "push"])  # Push the preprocessed data to DVC remote storage
+    subprocess.run(["dvc", "add", PROCESSED_CSV])
+    subprocess.run(["dvc", "push"])
 
-# Task 3: Train model
+
 def train_weather_model_task():
+    """Train model and push to DVC."""
     train_weather_model(PROCESSED_CSV, MODEL_PATH)
-    subprocess.run(["dvc", "add", MODEL_PATH])  # Track the trained model with DVC
-    subprocess.run(["dvc", "push"])  # Push the model to DVC remote storage
+    subprocess.run(["dvc", "add", MODEL_PATH])
+    subprocess.run(["dvc", "push"])
 
-# Airflow tasks
+
 fetch_data_task = PythonOperator(
     task_id='fetch_and_store_data',
     python_callable=fetch_and_store_data,
@@ -67,5 +73,5 @@ train_model_task = PythonOperator(
     dag=dag,
 )
 
-# Set task order (Fetch -> Preprocess -> Train model)
+# Set task order
 fetch_data_task >> preprocess_data_task >> train_model_task

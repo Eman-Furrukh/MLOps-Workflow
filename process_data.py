@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import logging
 
+
 # Set up logging
 logging.basicConfig(
     level=logging.INFO,
@@ -34,22 +35,27 @@ def preprocess_weather_data(input_path, output_path):
         df['Hour'] = df['Timestamp'].dt.hour
 
         # Create binary feature for rainy/cloudy weather
-        df['Is_Rainy'] = df['Weather'].str.contains("rain|drizzle|storm|shower", case=False, na=False).astype(int)
+        weather_pattern = "rain|drizzle|storm|shower"
+        df['Is_Rainy'] = df['Weather'].str.contains(
+            weather_pattern, case=False, na=False
+        ).astype(int)
 
         # Drop unused columns
         df.drop(columns=['City', 'Timestamp'], inplace=True)
 
-        # Reorder columns for output
-        cols = ['Hour', 'Temp (C)', 'Humidity (%)', 'Wind Speed (m/s)', 'Is_Rainy']
-        df = df[cols]
+        # Define column order
+        processed_cols = [
+            'Hour', 'Temp (C)', 'Humidity (%)',
+            'Wind Speed (m/s)', 'Is_Rainy'
+        ]
+        df = df[processed_cols]
 
         # Ensure output directory exists
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
         # Save to CSV
         df.to_csv(output_path, index=False)
-        logging.info("Preprocessed data saved to:")
-        logging.info(output_path)
+        logging.info(f"[✓] Preprocessed data saved to {output_path}")
     except Exception as e:
         logging.error(f"Error preprocessing weather data: {e}")
 

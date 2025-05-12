@@ -14,7 +14,10 @@ BASE_DIR = os.getcwd()
 
 # File paths
 PROCESSED_CSV = os.path.join(BASE_DIR, "data", "preprocessed_weather_data.csv")
-MODEL_PATH = os.path.join(BASE_DIR, "models", "weather_model.pkl")
+MODEL_PATH = os.path.join(
+    BASE_DIR, "models", "weather_model.pkl"
+)
+
 
 def train_weather_model(input_csv=PROCESSED_CSV, model_output=MODEL_PATH):
     """Train a RandomForest model to predict rainy conditions."""
@@ -40,14 +43,18 @@ def train_weather_model(input_csv=PROCESSED_CSV, model_output=MODEL_PATH):
         # Evaluate the model
         y_pred = model.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
-        logging.info(f"[✓] Model trained successfully. Accuracy: {accuracy:.2f}")
+        logging.info(
+            f"[✓] Model trained successfully. Accuracy: {accuracy:.2f}"
+        )
 
         # Save the trained model
         os.makedirs(os.path.dirname(model_output), exist_ok=True)
         joblib.dump(model, model_output)
         logging.info(f"[✓] Trained model saved to {model_output}")
+
     except Exception as e:
         logging.error(f"Error during model training: {e}")
+
 
 if __name__ == "__main__":
     train_weather_model()
